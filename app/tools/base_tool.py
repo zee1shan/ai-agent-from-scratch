@@ -12,7 +12,17 @@ class BaseTool(Generic[TArguments], ABC):
     description: str
     argument_model: type[TArguments]
 
-    def run(self, json: dict[str, Any]) -> Any:
+    def definition(self)->dict:
+        return {
+            "type":"function",
+            "function":{
+                "name":self.name,
+                "description":self.description,
+                "parameters":self.argument_model.model_json_schema()
+            }
+        }
+
+    def run(self, json: TArguments) -> Any:
         arguments = self.argument_model.model_validate(json)
         return self.execute(arguments)
 

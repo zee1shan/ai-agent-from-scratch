@@ -1,24 +1,19 @@
 from app.tools.calculator_tool.calculator_tool import CalculatorTool
+from app.tools.weather_tool.weather_tool import Weathertool
 from app.agent.agent import Agent
 from app.config.config import settings
 from groq import Groq
 def main():
     print("main laoder")
-    tool = CalculatorTool()
+    tools = [CalculatorTool(),Weathertool()]
     llm=Groq(api_key=settings.api_key)
     model=settings.model
-
-
-    result = tool.run(json={
-    "left": 12,
-    "right": 20,
-    "operation": "+"
-    })
-
-    print(result)
-    agent=Agent(tools=[tool],llm=llm,model=model)
-    print("agent response -----")
-    agent.chat("what is 3 plus 6")
+    agent=Agent(tools=tools,llm=llm,model=model)
+    while(True):
+        text=input()
+        if text=='exit':
+            break
+        agent.chat(question=text)
 
 
 if __name__ == '__main__':
